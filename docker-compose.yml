@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  flixpilot:
+    image: huanhq99/flixpilot:latest
+    container_name: flixpilot
+    restart: always
+    ports:
+      - "3005:3005"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TZ=Asia/Shanghai
+
+  redis:
+    image: redis:alpine
+    container_name: flixpilot-redis
+    restart: always
+    volumes:
+      - ./redis:/data
