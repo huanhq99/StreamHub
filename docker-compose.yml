@@ -12,6 +12,11 @@ services:
       - DATA_DIR=/app/data
       - TZ=Asia/Shanghai
       - REDIS_URL=redis://redis:6379
+<<<<<<< Updated upstream
+=======
+      # 可选：设置强 JWT 密钥（生产环境建议设置）
+      # - JWT_SECRET=your-super-secret-key-here
+>>>>>>> Stashed changes
     depends_on:
       redis:
         condition: service_healthy
