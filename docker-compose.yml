@@ -1,19 +1,39 @@
-version: '3.8'
 services:
   flixpilot:
     image: huanhq99/flixpilot:latest
     container_name: flixpilot
-    restart: always
+    restart: unless-stopped
     ports:
       - "3005:3005"
     volumes:
       - ./data:/app/data
     environment:
+      - NODE_ENV=production
+      - DATA_DIR=/app/data
       - TZ=Asia/Shanghai
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3005/api/config"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   redis:
-    image: redis:alpine
+    image: redis:7-alpine
     container_name: flixpilot-redis
-    restart: always
+    restart: unless-stopped
     volumes:
-      - ./redis:/data
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis_data:
